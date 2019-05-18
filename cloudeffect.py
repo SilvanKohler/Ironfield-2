@@ -15,10 +15,8 @@ def cloudEffect(width, height, x, y):
         for j in np.arange(width):
             d = dist((j,i), middle)
             # newLine = np.append(newLine, d)
-            newLine = np.append(newLine, n.noise2d(i/5 + y/20,j/50 + x/20) * (d))
+            newLine = np.append(newLine, (n.noise2d(i/5 + y/20,j/50 + x/20) + 1) * (d))
         output = np.append(output, newLine)
-    for i, n in enumerate(output):
-        output[i] = int(n + 1)
     output = np.reshape(output, (height,width))
     return output
 
