@@ -236,7 +236,7 @@ def game(screen):
                 screen.print_at('¦', width * 2 + screenOff[0], y + screenOff[1])
             #===============
             screen.print_at('                       ', 0, height+screenOff[1]*2)
-            screen.print_at(f'y: {int(player.y*8)}, x: {int(player.x*8)}', 0, height+screenOff[1]*2)
+            screen.print_at(f'x: {int(player.x*8)}, y: {int(player.y*8)}', 0, height+screenOff[1]*2)
 
             for y in range(height):
                 for x in range(width):
@@ -254,13 +254,14 @@ def game(screen):
                             screen.print_at(terrain[y][x], x * 2 + screenOff[0], y + screenOff[1], bg=background)
                     pass
             for p, y in zip(players, range(len(players))):
-                screen.print_at(str(p), width*2+screenOff[0], y)
+                screen.print_at('                                               ', width*2+screenOff[0]+1, y)
+                screen.print_at(f'{p[0]} x:{p[1][0]} y: {p[1][1]}', width*2+screenOff[0]+1, y)
             colour = 0
             for bot in bots:
                 print(bot)
                 colour = 5 if bot[3] == 'walker' else 6 if bot[3] == 'idler' else 7
                 if abs(player.y*8 - bot[2]*8)  < height//2 and abs(player.x*8 - bot[1]*8) < width//2:
-                    background = pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
+                    background = 0#pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
                     screen.print_at('()', int(bot[1]*16 - player.x*16 + width) + screenOff[0], int(bot[2] - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             for p in players:
                 colour += 1
@@ -271,7 +272,7 @@ def game(screen):
                     char = '{]'
                 # if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
                 if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
-                    background = pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
+                    background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
                     screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour+1, bg=background)
 
             # i = 0
