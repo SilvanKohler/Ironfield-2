@@ -83,7 +83,27 @@ class Character():
             self.x += 1/8
 
 player = Character()
-
+class Bullet():
+    def __init__(self, direction, x, y):
+        self.lifetime = random.randint(5, 10)
+        self.damage = random.randint(8, 16)
+        self.direction = direction
+        self.velocity = 3
+        self.x = x
+        self.y = y
+    def move(self):
+        if direction == 'up':
+            self.y -= self.velocity/8
+        elif direction == 'down':
+            self.y += self.velocity/8
+        elif direction == 'left':
+            self.y -= self.velocity/8
+        elif direction == 'right':
+            self.y += self.velocity/8
+    def hitted(self):
+        for p in players:
+            if self.y == p.y and self.x == p.x:
+                p.health -= self.damage
 
 
 # class Bot():
