@@ -1,7 +1,9 @@
-from opensimplex import OpenSimplex
-import numpy as np
 import os
 import time
+
+import numpy as np
+from opensimplex import OpenSimplex
+
 
 def dist(pos1, pos2):
     return (abs(pos1[0] - pos2[0]) ** 2 + abs(pos1[1] - pos2[1]) ** 2) ** 0.5

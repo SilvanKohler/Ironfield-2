@@ -1,4 +1,6 @@
-import random, time
+import random
+import time
+
 from opensimplex import OpenSimplex
 
 howManyBots = 1

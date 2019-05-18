@@ -1,8 +1,9 @@
+import os
+from random import randint
+from time import sleep
+
 import numpy as np
 from opensimplex import OpenSimplex
-from random import randint
-import os
-from time import sleep
 
 tmp = None
 width = 1000

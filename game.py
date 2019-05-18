@@ -101,51 +101,51 @@ player = Character()
 #             self.x += 1/8
 # for i in range(howManyBots):
 #     bots.append(Bot())
-class Bot():
-    global directions
-    def __init__(self):
-        self.x = random.randint(-1, 1)/8
-        self.y = random.randint(-1, 1)/8
-        self.char = '()'
-        self.movenum = 0
-        self.state = random.choice(states)
-        self.frequency = random.randint(15, 20)
-        self.seed = random.randint(0, 1000000)
-        self.noise = OpenSimplex(seed=self.seed)
-    def move(self):
-        self.movenum += 1
-        if self.state == 'walker':
-            index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*8)%9
-            direction = directions[states.index(self.state)][index]
-        elif self.state == 'idler':
-            index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*5)%6
-            direction = directions[states.index(self.state)][index]
-        elif self.state == 'average':
-            index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*4)%5
-            direction = directions[states.index(self.state)][index]
-        if direction == 'up':
-            for bot in bots:
-                if bot.y == self.y-1/8 and bot.x == self.x:
-                    return
-            self.y -= 1/8
-        elif direction == 'down':
-            for bot in bots:
-                if bot.y == self.y+1/8 and bot.x == self.x:
-                    return
-            self.y += 1/8
-        elif direction == 'left':
-            for bot in bots:
-                if bot.x == self.x-1/8 and bot.y == self.y:
-                    return
-            self.x -= 1/8
-        elif direction == 'right':
-            for bot in bots:
-                if bot.x == self.x+1/8 and bot.y == self.y:
-                    return
-            self.x += 1/8
-        self.movenum += 1
-for i in range(howManyBots):
-    bots.append(Bot())
+# class Bot():
+#     global directions
+#     def __init__(self):
+#         self.x = random.randint(-1, 1)/8
+#         self.y = random.randint(-1, 1)/8
+#         self.char = '()'
+#         self.movenum = 0
+#         self.state = random.choice(states)
+#         self.frequency = random.randint(15, 20)
+#         self.seed = random.randint(0, 1000000)
+#         self.noise = OpenSimplex(seed=self.seed)
+#     def move(self):
+#         self.movenum += 1
+#         if self.state == 'walker':
+#             index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*8)%9
+#             direction = directions[states.index(self.state)][index]
+#         elif self.state == 'idler':
+#             index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*5)%6
+#             direction = directions[states.index(self.state)][index]
+#         elif self.state == 'average':
+#             index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*4)%5
+#             direction = directions[states.index(self.state)][index]
+#         if direction == 'up':
+#             for bot in bots:
+#                 if bot.y == self.y-1/8 and bot.x == self.x:
+#                     return
+#             self.y -= 1/8
+#         elif direction == 'down':
+#             for bot in bots:
+#                 if bot.y == self.y+1/8 and bot.x == self.x:
+#                     return
+#             self.y += 1/8
+#         elif direction == 'left':
+#             for bot in bots:
+#                 if bot.x == self.x-1/8 and bot.y == self.y:
+#                     return
+#             self.x -= 1/8
+#         elif direction == 'right':
+#             for bot in bots:
+#                 if bot.x == self.x+1/8 and bot.y == self.y:
+#                     return
+#             self.x += 1/8
+#         self.movenum += 1
+# for i in range(howManyBots):
+#     bots.append(Bot())
 # def generateMap(width, height):
 #     output = []
 #     for i in range(height):
@@ -203,9 +203,9 @@ def game(screen):
     fps = 10
     while True:
         global players
-        if frames%5 == 0:
-            for bot in bots:
-                bot.move()
+        # if frames%5 == 0:
+        #     for bot in bots:
+        #         bot.move()
         t = time.time()
         terrain = renderMap(player.x, player.y, width, height, seed)
         # print(len(terrain), len(terrain[0]))
