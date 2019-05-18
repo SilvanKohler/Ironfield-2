@@ -120,7 +120,7 @@ class BotAdministration(threading.Thread):
             bots.append(Bot())
     def run(self):
         while True:
-            for bot in bots:-
+            for bot in bots:
                 bot.move()
 thread1 = listen()
 thread2 = BotAdministration()
