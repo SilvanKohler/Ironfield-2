@@ -1,17 +1,22 @@
 import pickle
+import random
 import socket
 import sys
 import threading
+import time
+
+from opensimplex import OpenSimplex
 
 clients = []
-CHUNK = 4096
+CHUNK = 64
 count = 0
 users = 0
 directions = [['up', 'up', 'down', 'down', 'left', 'left', 'right', 'right', 'idle'], ['up', 'down', 'left', 'right', 'idle', 'idle'], ['up', 'down', 'left', 'right', 'idle']]
 states = ['walker', 'idler', 'average']
 howManyBots = 10
 bots = []
-
+frames = 0
+fps = 10
 
 class lobby(threading.Thread):
     def __init__(self, clientAddress, clientsocket):
@@ -44,9 +49,16 @@ class lobby(threading.Thread):
                 for i in range(len(clients)):
                     if not i == self.num:
                         try:
-                            clients[i].send(data)
+                            data = ['playerdata', pickle.loads(data)]
+                            clients[i].send(pickle.dumps(data))
                         except:
                             pass
+                    try:
+                        for bot in bots:
+                            data = ['botdata', [bots.index(bot), bot.y, bot.x, bot.state]]
+                            clients[i].send(pickle.dumps(data))
+                    except:
+                        pass
 if len(sys.argv) > 1:
     IP = sys.argv[1]
     PORT = int(sys.argv[2])
@@ -118,10 +130,18 @@ class BotAdministration(threading.Thread):
         threading.Thread.__init__(self)
         for i in range(howManyBots):
             bots.append(Bot())
+        
     def run(self):
+        global frames
         while True:
-            for bot in bots:
-                bot.move()
+            t = time.time()
+            if frames%5 == 0:
+                for bot in bots:
+                    bot.move()
+            timeDif = time.time()-t
+            if 1/fps-timeDif > 0:
+                time.sleep(1/fps-timeDif)
+            frames += 1
 thread1 = listen()
 thread2 = BotAdministration()
 thread1.start()

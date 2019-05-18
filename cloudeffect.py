@@ -17,7 +17,7 @@ def cloudEffect(width, height, x, y):
         for j in np.arange(width):
             d = dist((j,i), middle)
             # newLine = np.append(newLine, d)
-            newLine = np.append(newLine, (n.noise2d(i/5 + y/20,j/50 + x/20) + 1) * (d))
+            newLine = np.append(newLine, (n.noise2d(i/5 + y*2,j/50 + x*20) + 1) * 10) #* (d))
         output = np.append(output, newLine)
     output = np.reshape(output, (height,width))
     return output
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     for x in np.arange(0,40):
         for line in cloudEffect(30, 30, x, 0):
             for p in line:
-                print('  ' if p < 4 else 'XX' if p < 8 else 'MM', end='')
+                print('  ' if p < 4 else '  ' if p < 6 else 'MM', end='')
             print('')
         time.sleep(0.1)
         os.system('cls')
