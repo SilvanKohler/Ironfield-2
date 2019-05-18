@@ -1,17 +1,10 @@
 from asciimatics.screen import Screen
 from asciimatics.renderers import Rainbow
 # import mysql.connector
-import random, pickle
-import time
+import random, pickle, threading, socket, os, sys, time #, mysql.connector
 from time import sleep
-import threading
 from opensimplex import OpenSimplex
 import numpy as np
-import sys
-import os
-import socket
-import threading
-
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server = ('192.168.1.191', 6969)
@@ -37,7 +30,10 @@ height = 20
 width = 20
 seed = 4908
 default_zoom = 8
-
+runthreads = True
+directions = ['up', 'down', 'left', 'right']
+howManyBots = 10
+bots = []
 class Character():
     global width, height
     def __init__(self):
@@ -65,8 +61,24 @@ player = Character()
 
 
 
-
-
+class Bot():
+    global directions
+    def __init__(self):
+        self.x = random.randint(-100, 100)/8
+        self.y = random.randint(-100, 100)/8
+        self.char = '()'
+    def move():
+        direction = random.choice(directions)
+        if direction == 'up':
+            self.y -= 1/8
+        if direction == 'down':
+            self.y += 1/8
+        if direction == 'left':
+            self.x -= 1/8
+        if direction == 'right':
+            self.x += 1/8
+for i in range(howManyBots):
+    bots.append(Bot())
 
 
 # def generateMap(width, height):
@@ -122,19 +134,23 @@ def renderMap(x, y, width, height, seed, zoom=default_zoom, boundaries=[(-100, 1
 def game(screen):
     screen.set_title('Ironfield 2')
     global player
-    fps = 10
+    frames = 0
     while True:
         global players
+        if frames%10 == 0:
+            for bot in bots:
+                bot.move()
         t = time.time()
         terrain = renderMap(player.x, player.y, width, height, seed)
         # print(len(terrain), len(terrain[0]))
 
         # Rahmen:
         screenOff = [1,1]
-        screen.print_at('+', 0,0)
-        screen.print_at('+', width * 2 + screenOff[0],0)
-        screen.print_at('+', 0,height + screenOff[1])
-        screen.print_at('+', width * 2 + screenOff[0],height + screenOff[1])
+        corner = '+'
+        screen.print_at(corner, 0,0)
+        screen.print_at(corner, width * 2 + screenOff[0],0)
+        screen.print_at(corner, 0,height + screenOff[1])
+        screen.print_at(corner, width * 2 + screenOff[0],height + screenOff[1])
         for x in range(width * 2):
             screen.print_at('-', x + screenOff[0], 0)
             screen.print_at('-', x + screenOff[0], height + screenOff[1])
@@ -161,15 +177,18 @@ def game(screen):
                 pass
         for p, y in zip(players, range(len(players))):
             screen.print_at(str(p), width*2+screenOff[0], y)
+        colour = 0
         for p in players:
+            colour += 1
+            colour %= 8
             print(p)
-            # if p[POS][1] + player.y > -height//2 and p[POS][1] + player.y < height//2 and p[POS][0] + player.x > -width//2 and p[POS][0] + player.x < width//2:
             if p[DIR] == 'right' or p[DIR] == 'up':
                 char = '[}'
             elif p[DIR] == 'left' or p[DIR] == 'down':
                 char = '{]'
+            # if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
             if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
-                screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1])
+                screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour)
             
         # i = 0
         # for objects in terrain:
@@ -191,17 +210,19 @@ def game(screen):
         elif ev in (ord('D'), ord('d'), -205):
             player.move('right')
         elif ev in (ord('Q'), ord('q')):
-            quit()
+            runthreads = False
             client.close()
+            quit()
             print(renderMap(player.x, player.y, width, height, seed))
             return
         elif not ev is None:
             print(ev)
+        frames += 1
 class upload(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
     def run(self):
-        while True:
+        while runthreads:
             client.send(pickle.dumps([player.name, [player.x, player.y], player.direction]))
             sleep(0.1)
 class download(threading.Thread):
@@ -209,7 +230,7 @@ class download(threading.Thread):
         threading.Thread.__init__(self)
     def run(self):
         global players
-        while True:
+        while runthreads:
             someplayer = client.recv(256)
             weg = False
             for index, item in enumerate(players):
@@ -222,15 +243,18 @@ class download(threading.Thread):
 def __init__(name):
     player.name = name
     print('name set')
-    client.connect(server)
+    try:
+        client.connect(server)
+    except:
+        print('SERVER OFFLINE OR NO CONNECTION TO THE INTERNET')
     print('connected')
-    thread2 = upload()
+    thread1 = upload()
     print('uploaded')
-    thread3 = download()
+    thread2 = download()
     print('downloaded')
-    thread2.start()
+    thread1.start()
     print('start 1')
-    thread3.start()
+    thread2.start()
     print('start 2')
     Screen.wrapper(game)
 if __name__ == "__main__":

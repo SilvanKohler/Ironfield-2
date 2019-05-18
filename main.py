@@ -1,24 +1,11 @@
 from asciimatics.screen import Screen
-from asciimatics.widgets import Frame, Layout, Button 
-from asciimatics.widgets import Frame, TextBox, Layout, Label, Divider, Text, \
-    CheckBox, RadioButtons, Button, PopUpDialog, TimePicker, DatePicker, Background, DropdownList, \
-    PopupMenu
+from asciimatics.widgets import Frame, TextBox, Layout, Label, Divider, Text, CheckBox, RadioButtons, Button, PopUpDialog, TimePicker, DatePicker, Background, DropdownList, PopupMenu
 from asciimatics.event import MouseEvent
 from asciimatics.scene import Scene
-from asciimatics.screen import Screen
-from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication, \
-    InvalidFields
-import mysql.connector
 from random import randint
-import datetime
-import os
-import sys
-import time
-import colorama
-import game
+import datetime, os, sys, time, game
+#https://prod.liveshare.vsengsaas.visualstudio.com/join?A4ED6FD4078376B0AC6942F329353F0ADDF8
 
-
-colorama.init()
 if len(sys.argv) >= 2:
     wholeName = sys.argv[1]
 else:
@@ -74,6 +61,6 @@ def menu(screen):
                 cursor += 1
                 break
     screen.clear()
-    screen.close
+    screen.close()
     start()
 Screen.wrapper(menu)
