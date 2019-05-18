@@ -37,11 +37,12 @@ Please read [CODE_OF_CONDUCT.md](https://github.com/SilvanKohler/Ironfield-2/blo
 
 * **Silvan Kohler** - *Networking and game mechanics* - [SilvanKohler](https://github.com/SilvanKohler)
 * **Pascal vF.** - *graphical user interface and other graphics* - [Mist124](https://github.com/Mist124)
+
 See also the list of [contributors](https://github.com/SilvanKohler/Ironfield-2/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/SilvanKohler/Ironfield-2/blob/master/LICENSE.md) file for details
 
 ## Acknowledgments
 
