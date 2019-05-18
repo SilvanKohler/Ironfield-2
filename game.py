@@ -31,7 +31,8 @@ width = 20
 seed = 4908
 default_zoom = 8
 runthreads = True
-directions = ['up', 'down', 'left', 'right']
+directions = [['up', 'up', 'down', 'down', 'left', 'left', 'right', 'right', 'idle'], ['up', 'down', 'left', 'right', 'idle', 'idle'], ['up', 'down', 'left', 'right', 'idle']]
+states = ['walker', 'idler', 'average']
 howManyBots = 10
 bots = []
 class Character():
@@ -46,41 +47,96 @@ class Character():
         self.direction = direction
         if direction == 'up':
             self.char = '[}'
+            for bot in bots:
+                if bot.y == self.y-1/8 and bot.x == self.x:
+                    return
             self.y -= 1/8
         if direction == 'down':
+            self.char = '{]'
+            for bot in bots:
+                if bot.y == self.y+1/8 and bot.x == self.x:
+                    return
             self.y += 1/8
-            self.char = '{]'
         if direction == 'left':
-            self.x -= 1/8
             self.char = '{]'
+            for bot in bots:
+                if bot.x == self.x-1/8 and bot.y == self.y:
+                    return
+            self.x -= 1/8
         if direction == 'right':
-            self.x += 1/8
             self.char = '[}'
+            for bot in bots:
+                if bot.x == self.x+1/8 and bot.y == self.y:
+                    return
+            self.x += 1/8
 
 player = Character()
 
 
 
+# class Bot():
+#     global directions
+#     def __init__(self):
+#         self.x = random.randint(-100, 100)/8
+#         self.y = random.randint(-100, 100)/8
+#         self.char = '()'
+#     def move(self):
+#         direction = random.choice(directions)
+#         if direction == 'up':
+#             self.y -= 1/8
+#         elif direction == 'down':
+#             self.y += 1/8
+#         elif direction == 'left':
+#             self.x -= 1/8
+#         elif direction == 'right':
+#             self.x += 1/8
+# for i in range(howManyBots):
+#     bots.append(Bot())
 class Bot():
     global directions
     def __init__(self):
-        self.x = random.randint(-100, 100)/8
-        self.y = random.randint(-100, 100)/8
+        self.x = random.randint(-1, 1)/8
+        self.y = random.randint(-1, 1)/8
         self.char = '()'
-    def move():
-        direction = random.choice(directions)
+        self.movenum = 0
+        self.state = random.choice(states)
+        self.frequency = random.randint(15, 20)
+        self.seed = random.randint(0, 1000000)
+        self.noise = OpenSimplex(seed=self.seed)
+    def move(self):
+        self.movenum += 1
+        if self.state == 'walker':
+            index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*8)%9
+            direction = directions[states.index(self.state)][index]
+        elif self.state == 'idler':
+            index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*5)%6
+            direction = directions[states.index(self.state)][index]
+        elif self.state == 'average':
+            index = int((self.noise.noise2d(0, self.movenum * (1/self.frequency))+1)*4)%5
+            direction = directions[states.index(self.state)][index]
         if direction == 'up':
+            for bot in bots:
+                if bot.y == self.y-1/8 and bot.x == self.x:
+                    return
             self.y -= 1/8
-        if direction == 'down':
+        elif direction == 'down':
+            for bot in bots:
+                if bot.y == self.y+1/8 and bot.x == self.x:
+                    return
             self.y += 1/8
-        if direction == 'left':
+        elif direction == 'left':
+            for bot in bots:
+                if bot.x == self.x-1/8 and bot.y == self.y:
+                    return
             self.x -= 1/8
-        if direction == 'right':
+        elif direction == 'right':
+            for bot in bots:
+                if bot.x == self.x+1/8 and bot.y == self.y:
+                    return
             self.x += 1/8
+        self.movenum += 1
 for i in range(howManyBots):
     bots.append(Bot())
-
-
 # def generateMap(width, height):
 #     output = []
 #     for i in range(height):
@@ -135,9 +191,10 @@ def game(screen):
     screen.set_title('Ironfield 2')
     global player
     frames = 0
+    fps = 10
     while True:
         global players
-        if frames%10 == 0:
+        if frames%5 == 0:
             for bot in bots:
                 bot.move()
         t = time.time()
@@ -148,7 +205,7 @@ def game(screen):
         screenOff = [1,1]
         corner = '+'
         screen.print_at(corner, 0,0)
-        screen.print_at(corner, width * 2 + screenOff[0],0)
+        screen.print_at(corner, width * 2 + screenOff[0],0, bg=1)
         screen.print_at(corner, 0,height + screenOff[1])
         screen.print_at(corner, width * 2 + screenOff[0],height + screenOff[1])
         for x in range(width * 2):
@@ -178,17 +235,20 @@ def game(screen):
         for p, y in zip(players, range(len(players))):
             screen.print_at(str(p), width*2+screenOff[0], y)
         colour = 0
+        for bot in bots:
+            colour = 5 if bot.state == 'walker' else 6 if bot.state == 'idler' else 7
+            if abs(player.y*8 - bot.y*8)  < height//2 and abs(player.x*8 - bot.x*8) < width//2:
+                screen.print_at(bot.char, int(bot.x*16 - player.x*16 + width) + screenOff[0], int(bot.y - player.y*8 + height/2) + screenOff[1], colour=colour)
         for p in players:
             colour += 1
-            colour %= 8
-            print(p)
+            colour %= 7
             if p[DIR] == 'right' or p[DIR] == 'up':
                 char = '[}'
             elif p[DIR] == 'left' or p[DIR] == 'down':
                 char = '{]'
             # if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
             if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
-                screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour)
+                screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour+1)
             
         # i = 0
         # for objects in terrain:
