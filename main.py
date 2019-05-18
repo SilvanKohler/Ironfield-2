@@ -1,10 +1,19 @@
-from asciimatics.screen import Screen
-from asciimatics.widgets import Frame, TextBox, Layout, Label, Divider, Text, CheckBox, RadioButtons, Button, PopUpDialog, TimePicker, DatePicker, Background, DropdownList, PopupMenu
+import datetime
+import os
+import sys
+import time
+from random import randint
+
 from asciimatics.event import MouseEvent
 from asciimatics.scene import Scene
-from random import randint
-import datetime, os, sys, time, game
-#https://prod.liveshare.vsengsaas.visualstudio.com/join?A4ED6FD4078376B0AC6942F329353F0ADDF8
+from asciimatics.screen import Screen
+from asciimatics.widgets import (Background, Button, CheckBox, DatePicker,
+                                 Divider, DropdownList, Frame, Label, Layout,
+                                 PopUpDialog, PopupMenu, RadioButtons, Text,
+                                 TextBox, TimePicker)
+
+import game
+
 
 if len(sys.argv) >= 2:
     wholeName = sys.argv[1]

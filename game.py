@@ -1,13 +1,22 @@
-from asciimatics.screen import Screen
-from asciimatics.renderers import Rainbow
+import os
+import pickle
 # import mysql.connector
-import random, pickle, threading, socket, os, sys, time #, mysql.connector
+import random  # , mysql.connector
+import socket
+import sys
+import threading
+import time
 from time import sleep
-from opensimplex import OpenSimplex
+
 import numpy as np
+from asciimatics.renderers import Rainbow
+from asciimatics.screen import Screen
+from opensimplex import OpenSimplex
+
+import cloudeffect
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server = ('192.168.1.191', 6969)
+server = ('localhost', 6969)
 
 players = []
 NAME = 0
@@ -203,9 +212,16 @@ def game(screen):
 
         # Rahmen:
         screenOff = [1,1]
+        # clouds = cloudeffect.cloudEffect(width, height, player.x, player.y)
+        # newclouds = np.zeros((height, width))
+        # for i, p in enumerate(clouds):
+        #     print(i, p)
+        #     newclouds[i] = 1 if p < 5 else 0
+        # clouds = newclouds
+
         corner = '+'
         screen.print_at(corner, 0,0)
-        screen.print_at(corner, width * 2 + screenOff[0],0, bg=1)
+        screen.print_at(corner, width * 2 + screenOff[0],0)
         screen.print_at(corner, 0,height + screenOff[1])
         screen.print_at(corner, width * 2 + screenOff[0],height + screenOff[1])
         for x in range(width * 2):
