@@ -21,7 +21,7 @@ else:
     wholeName = ''
 strichli = '_'
 nix = ' '
-chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ :_*/=&%+\\<>?!^~`´|#@¦¬¢$£,.}][{-1234567890'
+chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ :_*/=&%+\\<>?!^~`´|#@¦¢$öäü£,.}][{-1234567890'
 cursor = 0
 def start():
     game.__init__(wholeName)

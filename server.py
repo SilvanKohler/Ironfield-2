@@ -21,6 +21,7 @@ fps = 10
 class lobby(threading.Thread):
     def __init__(self, clientAddress, clientsocket):
         global count
+        global clients
         threading.Thread.__init__(self)
         self.num = count
         count += 1
@@ -31,6 +32,7 @@ class lobby(threading.Thread):
     def run(self):
         global count
         global users
+        global clients
         print('Client at ' + str(self.addr) + ' joined the game')
         users += 1
         print('{} users'.format(users))
@@ -40,25 +42,17 @@ class lobby(threading.Thread):
                 print(pickle.loads(data))
             except:
                 print('Client at ' + str(self.addr) + ' disconnected...')
-                clients.remove(clients[self.num])
+                clients.remove(self.csocket)
                 count -= 1
                 users -= 1
                 print('{} users'.format(users))
                 break
             finally:
+                message = ['playerdata', pickle.loads(data)]
                 for i in range(len(clients)):
-                    if not i == self.num:
-                        try:
-                            data = ['playerdata', pickle.loads(data)]
-                            clients[i].send(pickle.dumps(data))
-                        except:
-                            pass
-                    try:
-                        for bot in bots:
-                            data = ['botdata', [bots.index(bot), bot.y, bot.x, bot.state]]
-                            clients[i].send(pickle.dumps(data))
-                    except:
-                        pass
+                    if not clients[i] == self.csocket:
+                        clients[i].send(pickle.dumps(message))
+                    
 if len(sys.argv) > 1:
     IP = sys.argv[1]
     PORT = int(sys.argv[2])
@@ -85,14 +79,15 @@ class listen(threading.Thread):
 class Bot():
     global directions
     def __init__(self):
-        self.x = random.randint(-1, 1)/8
-        self.y = random.randint(-1, 1)/8
+        self.x = random.randint(-1, 1)*10/8/10
+        self.y = random.randint(-1, 1)*10/8/10
         self.char = '()'
         self.movenum = 0
         self.state = random.choice(states)
         self.frequency = random.randint(15, 20)
         self.seed = random.randint(0, 1000000)
         self.noise = OpenSimplex(seed=self.seed)
+        self.health = 100
     def move(self):
         self.movenum += 1
         if self.state == 'walker':
@@ -142,7 +137,19 @@ class BotAdministration(threading.Thread):
             if 1/fps-timeDif > 0:
                 time.sleep(1/fps-timeDif)
             frames += 1
+class BotSending(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+    def run(self):
+        while True:
+            datalist = ['botdata', []]
+            for bot in bots:
+                datalist[1].append([bots.index(bot), bot.y, bot.x, bot.state, bot.health])
+            for i in range(len(clients)):
+                clients[i].send(pickle.dumps(datalist))
 thread1 = listen()
 thread2 = BotAdministration()
+thread3 = BotSending()
 thread1.start()
 thread2.start()
+thread3.start()
