@@ -255,7 +255,7 @@ def game(screen):
                     pass
             for p, y in zip(players, range(len(players))):
                 screen.print_at('                                               ', width*2+screenOff[0]+1, y)
-                screen.print_at(f'{p[0]} x:{p[1][0]} y: {p[1][1]}', width*2+screenOff[0]+1, y)
+                screen.print_at(f'{p[0]}', width*2+screenOff[0]+1, y)
             colour = 0
             for bot in bots:
                 print(bot)
