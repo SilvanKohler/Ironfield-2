@@ -22,7 +22,7 @@ def cloudEffect(width, height, x, y):
     output = np.reshape(output, (height,width))
     return output
 
-if __name__ == '__main'
+if __name__ == '__main__':
     for x in np.arange(0,40):
         for line in cloudEffect(30, 30, x, 0):
             for p in line:
