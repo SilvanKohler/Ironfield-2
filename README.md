@@ -18,12 +18,14 @@ pip install -r requirements.txt
 If it worked you are ready to go
 
 ## Starting the game
-On Windows
+### On Windows
+
 Open the directory with the downloaded files and double-click the start.bat file or type
 ```
 py main.py
 ```
-On linux and OS X
+### On linux and OS X
+
 Open the directory with the downloaded files and type
 ```
 python3 main.py
