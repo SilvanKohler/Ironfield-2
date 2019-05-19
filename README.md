@@ -9,10 +9,6 @@ We are developing a game, but we don't know how this ends...
 ![GitHub forks](https://img.shields.io/github/forks/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub stars](https://img.shields.io/github/stars/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub watchers](https://img.shields.io/github/watchers/SilvanKohler/Ironfield-2.svg?style=flat-square)
-## Support on Beerpay
-Hey dude! Help me out for a couple of :beers:!
-
-[![Beerpay](https://beerpay.io/SilvanKohler/Ironfield-2/badge.svg?style=beer-square)](https://beerpay.io/SilvanKohler/Ironfield-2)  [![Beerpay](https://beerpay.io/SilvanKohler/Ironfield-2/make-wish.svg?style=flat-square)](https://beerpay.io/SilvanKohler/Ironfield-2?focus=wish)
 
 ## Getting Started
 
