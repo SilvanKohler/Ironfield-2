@@ -33,7 +33,7 @@ python3 main.py
 
 ## Contributing
 
-Please read [CODE_OF_CONDUCT.md](https://github.com/SilvanKohler/Ironfield-2/blob/master/CODE_OF_CONDUCT.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING](https://github.com/SilvanKohler/Ironfield-2/blob/master/CONTRIBUTING.md) and our [CODE_OF_CONDUCT](https://github.com/SilvanKohler/Ironfield-2/blob/master/CODE_OF_CONDUCT.md) for details, and the process for submitting pull requests to us.
 
 ## Authors
 
