@@ -5,7 +5,9 @@ We are developing a game, but we don't know how this ends...
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub followers](https://img.shields.io/github/followers/SilvanKohler.svg?style=flat-square)
-
+![GitHub forks](https://img.shields.io/github/forks/SilvanKohler/Ironfield-2.svg?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/SilvanKohler/Ironfield-2.svg?style=flat-square)
+![GitHub watchers](https://img.shields.io/github/watchers/SilvanKohler/Ironfield-2.svg?style=flat-square)
 
 
 ## Getting Started
