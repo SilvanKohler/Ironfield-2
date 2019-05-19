@@ -2,6 +2,7 @@
 We are developing a game, but we don't know how this ends...
 
 ![GitHub All Releases](https://img.shields.io/github/downloads/SilvanKohler/Ironfield-2/total.svg?style=flat-square)
+![GitHub release](https://img.shields.io/github/release-pre/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub followers](https://img.shields.io/github/followers/SilvanKohler.svg?style=flat-square)
