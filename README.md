@@ -60,3 +60,8 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 * We used [Asciimatics](https://github.com/peterbrittain/asciimatics) by [Peterbrittain](https://github.com/peterbrittain)
 * Inspired by Ironfield (made only by me)
+
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/SilvanKohler/Ironfield-2/badge.svg?style=beer-square)](https://beerpay.io/SilvanKohler/Ironfield-2)  [![Beerpay](https://beerpay.io/SilvanKohler/Ironfield-2/make-wish.svg?style=flat-square)](https://beerpay.io/SilvanKohler/Ironfield-2?focus=wish)
