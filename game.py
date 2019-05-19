@@ -1,7 +1,5 @@
-#https://prod.liveshare.vsengsaas.visualstudio.com/join?612A155ECAA83CE6041BDEF05D2F0FEEF7AC
 import os
 import pickle
-# import mysql.connector
 import random
 import socket
 import sys
