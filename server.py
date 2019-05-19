@@ -4,16 +4,17 @@ import socket
 import sys
 import threading
 import time
+from time import sleep
 
 from opensimplex import OpenSimplex
 
 clients = []
-CHUNK = 64
+CHUNK = 256
 count = 0
 users = 0
 directions = [['up', 'up', 'down', 'down', 'left', 'left', 'right', 'right', 'idle'], ['up', 'down', 'left', 'right', 'idle', 'idle'], ['up', 'down', 'left', 'right', 'idle']]
 states = ['walker', 'idler', 'average']
-howManyBots = 10
+howManyBots = 300
 bots = []
 frames = 0
 fps = 10
@@ -39,7 +40,6 @@ class lobby(threading.Thread):
         while True:
             try:
                 data = self.csocket.recv(CHUNK)
-                print(pickle.loads(data))
             except:
                 print('Client at ' + str(self.addr) + ' disconnected...')
                 clients.remove(self.csocket)
@@ -48,10 +48,10 @@ class lobby(threading.Thread):
                 print('{} users'.format(users))
                 break
             finally:
-                message = ['playerdata', pickle.loads(data)]
                 for i in range(len(clients)):
                     if not clients[i] == self.csocket:
-                        clients[i].send(pickle.dumps(message))
+                        clients[i].send(data)
+            sleep(0.2)
                     
 if len(sys.argv) > 1:
     IP = sys.argv[1]
@@ -79,8 +79,8 @@ class listen(threading.Thread):
 class Bot():
     global directions
     def __init__(self):
-        self.x = random.randint(-1, 1)*10/8/10
-        self.y = random.randint(-1, 1)*10/8/10
+        self.x = ((random.randint(-98, 98)*10)/8)/10
+        self.y = ((random.randint(-98, 98)*10)/8)/10
         self.char = '()'
         self.movenum = 0
         self.state = random.choice(states)
@@ -103,21 +103,29 @@ class Bot():
             for bot in bots:
                 if bot.y == self.y-1/8 and bot.x == self.x:
                     return
+            if self.y - 1/8 <= 100/8:
+                return
             self.y -= 1/8
         elif direction == 'down':
             for bot in bots:
                 if bot.y == self.y+1/8 and bot.x == self.x:
                     return
+            if self.y + 1/8 >= 100/8:
+                return
             self.y += 1/8
         elif direction == 'left':
             for bot in bots:
                 if bot.x == self.x-1/8 and bot.y == self.y:
                     return
+            if self.x - 1/8 <= 100/8:
+                return
             self.x -= 1/8
         elif direction == 'right':
             for bot in bots:
                 if bot.x == self.x+1/8 and bot.y == self.y:
                     return
+            if self.x + 1/8 >= 100/8:
+                return
             self.x += 1/8
         self.movenum += 1
 class BotAdministration(threading.Thread):
@@ -127,26 +135,31 @@ class BotAdministration(threading.Thread):
             bots.append(Bot())
         
     def run(self):
-        global frames
-        while True:
-            t = time.time()
-            if frames%5 == 0:
-                for bot in bots:
-                    bot.move()
-            timeDif = time.time()-t
-            if 1/fps-timeDif > 0:
-                time.sleep(1/fps-timeDif)
-            frames += 1
+        pass
 class BotSending(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
     def run(self):
+        global frames
+        global clients
         while True:
-            datalist = ['botdata', []]
-            for bot in bots:
-                datalist[1].append([bots.index(bot), bot.y, bot.x, bot.state, bot.health])
-            for i in range(len(clients)):
-                clients[i].send(pickle.dumps(datalist))
+            try:
+                t = time.time()
+                if frames%2 == 0:
+                    for bot in bots:
+                        bot.move()
+                datalist = ['botdata', []]
+                for bot in bots:
+                    datalist[1].append([bots.index(bot), bot.y, bot.x, bot.state, bot.health])
+                for i in range(len(clients)):
+                    clients[i].send(pickle.dumps(datalist))
+                timeDif = time.time()-t
+                if 1/fps-timeDif > 0:
+                    time.sleep(1/fps-timeDif)
+                frames += 1
+            except:
+                pass
+            
 thread1 = listen()
 thread2 = BotAdministration()
 thread3 = BotSending()

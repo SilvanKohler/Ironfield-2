@@ -19,8 +19,9 @@ server = ('62.203.180.48', 6969)
 
 players = []
 NAME = 0
-POS = 1 # [y, x]
+POS = 1 # [x, y]
 DIR = 2 # 'left' 'right' 'up' 'down'
+HEALTH = 3
 
 blocks = [
     'XX',
@@ -43,6 +44,10 @@ directions = [['up', 'up', 'down', 'down', 'left', 'left', 'right', 'right', 'id
 states = ['walker', 'idler', 'average']
 howManyBots = 10
 bots = []
+ownbullets = []
+bullets = []
+
+
 class Character():
     global width, height
     def __init__(self):
@@ -98,11 +103,14 @@ class Bullet():
             self.y -= self.velocity/8
         elif direction == 'right':
             self.y += self.velocity/8
-    def hitted(self):
+    def isHitted(self):
         for p in players:
-            if self.y == p.y and self.x == p.x:
+            if self.y == p[POS][1] and self.x == p[POS][0]:
                 p.health -= self.damage
-
+                bullets.remove(self)
+                client.send(pickle.dumps(['targethit', [p[NAME], p[HEALTH]]]))
+                return True
+        return False
 
 # class Bot():
 #     global directions
@@ -212,6 +220,7 @@ def pick_bg(x, y, arr):
     return int(arr[y, x] * 3.5)
 
 
+
 def game(screen):
     try:
         screen.set_title('Ironfield 2')
@@ -280,7 +289,7 @@ def game(screen):
                 colour = 5 if bot[3] == 'walker' else 6 if bot[3] == 'idler' else 7
                 if abs(player.y*8 - bot[2]*8)  < height//2 and abs(player.x*8 - bot[1]*8) < width//2:
                     background = 0#pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
-                    screen.print_at('()', int(bot[1]*16 - player.x*16 + width) + screenOff[0], int(bot[2] - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
+                    screen.print_at('()', int(bot[1]*16 - player.x*16 + width) + screenOff[0], int(bot[2]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             for p in players:
                 colour += 1
                 colour %= 7
@@ -292,7 +301,24 @@ def game(screen):
                 if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
                     background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
                     screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour+1, bg=background)
-
+            # for b in bullets:
+            #     colour = 5
+            #     if b[1]  == 'down' or p[DIR] == 'up':
+            #         bullet =  '¦'
+            #     elif b[1] == 'left' or p[DIR] == 'right':
+            #         bullet = '--'
+            #     if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
+            #         background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
+            #         screen.print_at(bullet, int(b[2][0]*16 - player.x*16 + width) + screenOff[0], int(p[2][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
+            # for b in ownbullets:
+            #     colour = 5
+            #     if b[1]  == 'down' or p[DIR] == 'up':
+            #         bullet =  '¦'
+            #     elif b[1] == 'left' or p[DIR] == 'right':
+            #         bullet = '--'
+            #     if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
+            #         background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
+            #         screen.print_at(bullet, int(b[2][0]*16 - player.x*16 + width) + screenOff[0], int(p[2][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             # i = 0
             # for objects in terrain:
             #     for obj in objects:
@@ -304,6 +330,7 @@ def game(screen):
             if 1/fps-timeDif > 0:
                 time.sleep(1/fps-timeDif)
             ev = screen.get_key()
+            print(ev)
             if ev in (ord('W'), ord('w'), -204):
                 player.move('up')
             elif ev in (ord('S'), ord('s'), -206):
@@ -312,9 +339,12 @@ def game(screen):
                 player.move('left')
             elif ev in (ord('D'), ord('d'), -205):
                 player.move('right')
-            elif ev in (ord('Q'), ord('q')):
+            elif ev in (32, -32):
+                ownbullets.append(Bullet(player.direction, player.x, player.y))
+            elif ev in (ord('Q'), ord('q'), -113):
                 print('abbrechen')
                 runthreads = False
+                sleep(0.1)
                 client.close()
                 quit()
                 return
@@ -329,8 +359,11 @@ class upload(threading.Thread):
         threading.Thread.__init__(self)
     def run(self):
         while runthreads:
-            client.send(pickle.dumps([player.name, [player.x, player.y], player.direction, player.health]))
-            sleep(0.3)
+            for b in ownbullets:
+                client.send(pickle.dumps(['target', [b, b.direction, [b.x, b.y]]]))
+                sleep(0.05)
+            client.send(pickle.dumps(['playerdata', [player.name, [player.x, player.y], player.direction, player.health]]))
+            sleep(0.2)
 class download(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -339,7 +372,7 @@ class download(threading.Thread):
         global bots
         while runthreads:
             try:
-                someplayer = client.recv(4098)
+                someplayer = client.recv(65536)
                 weg = False
                 if pickle.loads(someplayer)[0] == 'playerdata':
                     for index, item in enumerate(players):
@@ -349,10 +382,21 @@ class download(threading.Thread):
                             break
                     if not weg:
                         players.append(pickle.loads(someplayer)[1])
-                if pickle.loads(someplayer)[0] == 'botdata':
+                elif pickle.loads(someplayer)[0] == 'botdata':
                     bots = pickle.loads(someplayer)[1]
+                    print(bots)
+                elif pickle.loads(someplayer)[0] == 'targethit':
+                    if pickle.loads(someplayer)[1][0] == player.name:
+                        player.health = pickle.loads(someplayer)[1][1]
+                elif pickle.loads(someplayer)[0] == 'target':
+                    if item[0] == pickle.loads(someplayer)[1][0]:
+                        bullets[index] = pickle.loads(someplayer)[1]
+                        weg = True
+                        break
+                    if not weg:
+                        bullets.append(pickle.loads(someplayer)[1])
             except:
-                pass
+                quit()
 def __init__(name):
     player.name = name
     print('SERVER OFFLINE OR NO CONNECTION TO THE INTERNET')    
