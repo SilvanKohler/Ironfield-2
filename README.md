@@ -48,5 +48,5 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 ## Acknowledgments
 
-* We used Asciimatics
+* We used [Asciimatics](https://github.com/peterbrittain/asciimatics) by [Peterbrittain](https://github.com/peterbrittain)
 * Inspired by Ironfield (made only by me)
