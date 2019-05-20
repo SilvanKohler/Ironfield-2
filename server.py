@@ -9,7 +9,7 @@ from time import sleep
 from opensimplex import OpenSimplex
 
 clients = []
-CHUNK = 256
+CHUNK = 128
 count = 0
 users = 0
 directions = [['up', 'up', 'down', 'down', 'left', 'left', 'right', 'right', 'idle'], ['up', 'down', 'left', 'right', 'idle', 'idle'], ['up', 'down', 'left', 'right', 'idle']]
@@ -48,6 +48,7 @@ class lobby(threading.Thread):
                 print('{} users'.format(users))
                 break
             finally:
+                print(data)
                 if pickle.loads(data)[0] == 'targethitbot':
                     for b in bots:
                         if bots.index(b) == pickle.loads(data)[1][0]:
