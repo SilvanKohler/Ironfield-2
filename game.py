@@ -91,18 +91,18 @@ class Bullet():
         self.lifetime = random.randint(5, 10)
         self.damage = random.randint(8, 16)
         self.direction = direction
-        self.velocity = 3
+        self.velocity = 1
         self.x = x
         self.y = y
     def move(self):
-        if direction == 'up':
+        if self.direction == 'up':
             self.y -= self.velocity/8
-        elif direction == 'down':
+        elif self.direction == 'down':
             self.y += self.velocity/8
-        elif direction == 'left':
-            self.y -= self.velocity/8
-        elif direction == 'right':
-            self.y += self.velocity/8
+        elif self.direction == 'left':
+            self.x -= self.velocity/8
+        elif self.direction == 'right':
+            self.x += self.velocity/8
     def isHitted(self):
         for p in players:
             if self.y == p[POS][1] and self.x == p[POS][0]:
@@ -232,6 +232,10 @@ def game(screen):
         wind = 0
         cloudcolor = 2
         while True:
+            for b in ownbullets:
+                b.move()
+                if b.isHitted():
+                    ownbullets.remove(b)
             wind += 0.01
             global players
             # if frames%5 == 0:
