@@ -285,7 +285,6 @@ def game(screen):
                 screen.print_at(f'{p[0]}', width*2+screenOff[0]+1, y)
             colour = 0
             for bot in bots:
-                print(bot)
                 colour = 5 if bot[3] == 'walker' else 6 if bot[3] == 'idler' else 7
                 if abs(player.y*8 - bot[2]*8)  < height//2 and abs(player.x*8 - bot[1]*8) < width//2:
                     background = 0#pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
@@ -301,24 +300,24 @@ def game(screen):
                 if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
                     background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
                     screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour+1, bg=background)
-            # for b in bullets:
-            #     colour = 5
-            #     if b[1]  == 'down' or p[DIR] == 'up':
-            #         bullet =  '¦'
-            #     elif b[1] == 'left' or p[DIR] == 'right':
-            #         bullet = '--'
-            #     if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
-            #         background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
-            #         screen.print_at(bullet, int(b[2][0]*16 - player.x*16 + width) + screenOff[0], int(p[2][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
-            # for b in ownbullets:
-            #     colour = 5
-            #     if b[1]  == 'down' or p[DIR] == 'up':
-            #         bullet =  '¦'
-            #     elif b[1] == 'left' or p[DIR] == 'right':
-            #         bullet = '--'
-            #     if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
-            #         background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
-            #         screen.print_at(bullet, int(b[2][0]*16 - player.x*16 + width) + screenOff[0], int(p[2][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
+            for b in bullets:
+                colour = 5
+                if b.direction  == 'down' or b.direction == 'up':
+                    bullet =  '¦'
+                elif b.direction == 'left' or b.direction == 'right':
+                    bullet = '--'
+                if abs(player.y*8 - b.y*8)  < height//2 and abs(player.x*8 - b.x*8) < width//2:
+                    background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
+                    screen.print_at(bullet , int(b.x*16 - player.x*16 + width) + screenOff[0], int(b.y*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
+            for b in ownbullets:
+                colour = 5
+                if b.direction  == 'down' or b.direction == 'up':
+                    bullet =  '¦'
+                elif b.direction == 'left' or b.direction == 'right':
+                    bullet = '--'
+                if abs(player.y*8 - b.y*8)  < height//2 and abs(player.x*8 - b.x*8) < width//2:
+                    background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
+                    screen.print_at(bullet , int(b.x*16 - player.x*16 + width) + screenOff[0], int(b.y*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             # i = 0
             # for objects in terrain:
             #     for obj in objects:
@@ -384,7 +383,6 @@ class download(threading.Thread):
                         players.append(pickle.loads(someplayer)[1])
                 elif pickle.loads(someplayer)[0] == 'botdata':
                     bots = pickle.loads(someplayer)[1]
-                    print(bots)
                 elif pickle.loads(someplayer)[0] == 'targethit':
                     if pickle.loads(someplayer)[1][0] == player.name:
                         player.health = pickle.loads(someplayer)[1][1]
