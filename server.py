@@ -9,7 +9,7 @@ from time import sleep
 from opensimplex import OpenSimplex
 
 clients = []
-CHUNK = 128
+CHUNK = 2048
 count = 0
 users = 0
 directions = [['up', 'up', 'down', 'down', 'left', 'left', 'right', 'right', 'idle'], ['up', 'down', 'left', 'right', 'idle', 'idle'], ['up', 'down', 'left', 'right', 'idle']]
