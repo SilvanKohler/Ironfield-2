@@ -47,7 +47,6 @@ bots = []
 ownbullets = []
 bullets = []
 
-
 class Character():
     global width, height
     def __init__(self):
@@ -109,7 +108,7 @@ class Bullet():
         global ownbullets
         for p in players:
             if self.y == p[POS][1] and self.x == p[POS][0]:
-                p.health -= self.damage
+                p[3] -= self.damage
                 ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
                 client.send(pickle.dumps(['targethitplayer', [p[NAME], p[HEALTH]]]))
     def botHitted(self):
@@ -277,8 +276,18 @@ def game(screen):
                 screen.print_at('¦', 0, y + screenOff[1])
                 screen.print_at('¦', width * 2 + screenOff[0], y + screenOff[1])
             #===============
-            screen.print_at('                       ', 0, height+screenOff[1]*2)
-            screen.print_at(f'x: {int(player.x*8)}, y: {int(player.y*8)}', 0, height+screenOff[1]*2)
+            healthbar = ''
+            for i in range(0, player.health):
+                if i%10 == 0:
+                    healthbar += 'X'
+            for i in range(player.health, 100):
+                if i%10 == 0:
+                    healthbar += 'O'
+            for index, char in enumerate(healthbar):
+                screen.print_at(char, index, height+screenOff[1]*2, colour=2 if char == 'X' else 1)
+            screen.print_at(str(player.health) + '%', 11, height+screenOff[1]*2)
+            screen.print_at('                       ', 0, height+screenOff[1]*2+1)
+            screen.print_at(f'x: {int(player.x*8)}, y: {int(player.y*8)}', 0, height+screenOff[1]*2+1)
 
             for y in range(height):
                 for x in range(width):
@@ -317,13 +326,13 @@ def game(screen):
                     screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour+1, bg=background)
             for b in bullets:
                 colour = 5
-                if b.direction  == 'down' or b.direction == 'up':
+                if b[1]  == 'down' or b[1] == 'up':
                     bullet =  '¦'
-                elif b.direction == 'left' or b.direction == 'right':
+                elif b[1] == 'left' or b[1] == 'right':
                     bullet = '--'
-                if abs(player.y*8 - b.y*8)  < height//2 and abs(player.x*8 - b.x*8) < width//2:
+                if abs(player.y*8 - b[2][1]*8)  < height//2 and abs(player.x*8 -b[2][0]*8) < width//2:
                     background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
-                    screen.print_at(bullet , int(b.x*16 - player.x*16 + width) + screenOff[0], int(b.y*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
+                    screen.print_at(bullet , int(b[2][0]*16 - player.x*16 + width) + screenOff[0], int(b[2][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             for b in ownbullets:
                 colour = 5
                 if b.direction  == 'down' or b.direction == 'up':
