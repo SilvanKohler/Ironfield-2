@@ -83,6 +83,8 @@ class Character():
                 if bot[1] == self.x+1/8 and bot[2] == self.y:
                     return
             self.x += 1/8
+    def dead(self):
+        return self.health <= 0
 
 player = Character()
 class Bullet():
@@ -110,6 +112,10 @@ class Bullet():
             if self.y == p[POS][1] and self.x == p[POS][0]:
                 p[3] -= self.damage
                 ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
+                if p[3] <= 0:
+                    player.xp += 15
+                else:
+                    player.xp += 3
                 client.send(pickle.dumps(['targethitplayer', [p[NAME], p[HEALTH]]]))
     def botHitted(self):
         global ownbullets
@@ -117,6 +123,10 @@ class Bullet():
             if self.y == b[1][1] and self.x == b[1][0]:
                 b[3] -= self.damage
                 ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
+                if b[3] <= 0:
+                    player.xp += 10
+                else:
+                    player.xp += 1
                 client.send(pickle.dumps(['targethitbot', [b[0], b[3]]]))
                 for b1 in bots:
                     if b < b1:
@@ -248,6 +258,8 @@ def game(screen):
                 b.botHitted()
             wind += 0.01
             global players
+            if player.dead():
+                quit()
             # if frames%5 == 0:
             #     for bot in bots:
             #         bot.move()
@@ -276,6 +288,7 @@ def game(screen):
                 screen.print_at('¦', 0, y + screenOff[1])
                 screen.print_at('¦', width * 2 + screenOff[0], y + screenOff[1])
             #===============
+            screen.print_at(str(player.xp) + 'XP', 0, height+screenOff[1]*2, colour=2)
             healthbar = ''
             for i in range(0, player.health):
                 if i%10 == 0:
@@ -284,10 +297,10 @@ def game(screen):
                 if i%10 == 0:
                     healthbar += 'O'
             for index, char in enumerate(healthbar):
-                screen.print_at(char, index, height+screenOff[1]*2, colour=2 if char == 'X' else 1)
-            screen.print_at(str(player.health) + '%', 11, height+screenOff[1]*2)
-            screen.print_at('                       ', 0, height+screenOff[1]*2+1)
-            screen.print_at(f'x: {int(player.x*8)}, y: {int(player.y*8)}', 0, height+screenOff[1]*2+1)
+                screen.print_at(char, index, height+screenOff[1]*2+1, colour=2 if char == 'X' else 1)
+            screen.print_at(str(player.health) + '%', 11, height+screenOff[1]*2+1)
+            screen.print_at('                       ', 0, height+screenOff[1]*2+2)
+            screen.print_at(f'x: {int(player.x*8)}, y: {int(player.y*8)}', 0, height+screenOff[1]*2+2)
 
             for y in range(height):
                 for x in range(width):
