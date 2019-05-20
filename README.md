@@ -18,8 +18,13 @@ This is a tutorial how to install the game and run it.
 
 How to get started
 
+Download the repository
+
+[Download](https://github.com/SilvanKohler/Ironfield-2/releases/)
+
 Install the modules
 
+Open the directory and type
 ```
 pip install -r requirements.txt
 ```
