@@ -15,7 +15,7 @@ from opensimplex import OpenSimplex
 import cloudeffect
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server = ('62.203.180.48', 6969)
+server = ('127.0.0.1', 6969)
 
 players = []
 NAME = 0
@@ -108,7 +108,18 @@ class Bullet():
             if self.y == p[POS][1] and self.x == p[POS][0]:
                 p.health -= self.damage
                 bullets.remove(self)
-                client.send(pickle.dumps(['targethit', [p[NAME], p[HEALTH]]]))
+                client.send(pickle.dumps(['targethitplayer', [p[NAME], p[HEALTH]]]))
+                return True
+        return False
+    def botHitted(self):
+        for b in bots:
+            if self.y == b[1][1] and self.x == b[1][0]:
+                b[3] -= self.damage
+                bullets.remove(self)
+                client.send(pickle.dumps(['targethitbot', [b[0], b[3]]]))
+                for b1 in bots:
+                    if b < b1:
+                        b1[0] -= 1
                 return True
         return False
 
@@ -236,6 +247,8 @@ def game(screen):
                 b.move()
                 if b.isHitted():
                     ownbullets.remove(b)
+                elif b.botHitted():
+                    ownbullets.remove(b)
             wind += 0.01
             global players
             # if frames%5 == 0:
@@ -289,10 +302,9 @@ def game(screen):
                 screen.print_at(f'{p[0]}', width*2+screenOff[0]+1, y)
             colour = 0
             for bot in bots:
-                colour = 5 if bot[3] == 'walker' else 6 if bot[3] == 'idler' else 7
-                if abs(player.y*8 - bot[2]*8)  < height//2 and abs(player.x*8 - bot[1]*8) < width//2:
-                    background = 0#pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
-                    screen.print_at('()', int(bot[1]*16 - player.x*16 + width) + screenOff[0], int(bot[2]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
+                colour = 5 if bot[2] == 'walker' else 6 if bot[2] == 'idler' else 7
+                background = 0#pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
+                screen.print_at('()', int(bot[1][0]*16 - player.x*16 + width) + screenOff[0], int(bot[1][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             for p in players:
                 colour += 1
                 colour %= 7
@@ -387,7 +399,7 @@ class download(threading.Thread):
                         players.append(pickle.loads(someplayer)[1])
                 elif pickle.loads(someplayer)[0] == 'botdata':
                     bots = pickle.loads(someplayer)[1]
-                elif pickle.loads(someplayer)[0] == 'targethit':
+                elif pickle.loads(someplayer)[0] == 'targethitplayer':
                     if pickle.loads(someplayer)[1][0] == player.name:
                         player.health = pickle.loads(someplayer)[1][1]
                 elif pickle.loads(someplayer)[0] == 'target':
