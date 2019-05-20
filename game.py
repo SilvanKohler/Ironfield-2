@@ -88,6 +88,8 @@ class Character():
 player = Character()
 class Bullet():
     def __init__(self, direction, x, y):
+        global ownbullets
+        self.index = len(ownbullets)
         self.lifetime = random.randint(5, 10)
         self.damage = random.randint(8, 16)
         self.direction = direction
@@ -104,24 +106,22 @@ class Bullet():
         elif self.direction == 'right':
             self.x += self.velocity/8
     def isHitted(self):
+        global ownbullets
         for p in players:
             if self.y == p[POS][1] and self.x == p[POS][0]:
                 p.health -= self.damage
-                bullets.remove(self)
+                ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
                 client.send(pickle.dumps(['targethitplayer', [p[NAME], p[HEALTH]]]))
-                return True
-        return False
     def botHitted(self):
+        global ownbullets
         for b in bots:
             if self.y == b[1][1] and self.x == b[1][0]:
                 b[3] -= self.damage
-                bullets.remove(self)
+                ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
                 client.send(pickle.dumps(['targethitbot', [b[0], b[3]]]))
                 for b1 in bots:
                     if b < b1:
                         b1[0] -= 1
-                return True
-        return False
 
 # class Bot():
 #     global directions
@@ -245,10 +245,8 @@ def game(screen):
         while True:
             for b in ownbullets:
                 b.move()
-                if b.isHitted():
-                    ownbullets.remove(b)
-                elif b.botHitted():
-                    ownbullets.remove(b)
+                b.isHitted()
+                b.botHitted()
             wind += 0.01
             global players
             # if frames%5 == 0:
@@ -304,7 +302,8 @@ def game(screen):
             for bot in bots:
                 colour = 5 if bot[2] == 'walker' else 6 if bot[2] == 'idler' else 7
                 background = 0#pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
-                screen.print_at('()', int(bot[1][0]*16 - player.x*16 + width) + screenOff[0], int(bot[1][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
+                if abs(player.y*8 - bot[1][1]*8)  < height//2 and abs(player.x*8 - bot[1][0]*8) < width//2:
+                    screen.print_at('()', int(bot[1][0]*16 - player.x*16 + width) + screenOff[0], int(bot[1][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             for p in players:
                 colour += 1
                 colour %= 7
