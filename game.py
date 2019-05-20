@@ -383,7 +383,7 @@ class upload(threading.Thread):
     def run(self):
         while runthreads:
             for b in ownbullets:
-                client.send(pickle.dumps(['target', [b, b.direction, [b.x, b.y]]]))
+                client.send(pickle.dumps(['target', [bullets.index(b), b.direction, [b.x, b.y]]]))
                 sleep(0.05)
             client.send(pickle.dumps(['playerdata', [player.name, [player.x, player.y], player.direction, player.health]]))
             sleep(0.2)
