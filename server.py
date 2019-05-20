@@ -48,9 +48,18 @@ class lobby(threading.Thread):
                 print('{} users'.format(users))
                 break
             finally:
-                for i in range(len(clients)):
-                    if not clients[i] == self.csocket:
-                        clients[i].send(data)
+                if pickle.loads(data)[0] == 'targethitbot':
+                    for b in bots:
+                        if bots.index(b) == pickle.loads(data)[1][0]:
+                            if pickle.loads(data)[1][1] <= 0:
+                                bots.remove(b)
+                            else:
+                                b.health = pickle.loads(data)[1][1]
+                            break
+                else:
+                    for i in range(len(clients)):
+                        if not clients[i] == self.csocket:
+                            clients[i].send(data)
             sleep(0.2)
                     
 if len(sys.argv) > 1:
@@ -150,7 +159,7 @@ class BotSending(threading.Thread):
                         bot.move()
                 datalist = ['botdata', []]
                 for bot in bots:
-                    datalist[1].append([bots.index(bot), bot.y, bot.x, bot.state, bot.health])
+                    datalist[1].append([bots.index(bot), [bot.x, bot.y], bot.state, bot.health])
                 for i in range(len(clients)):
                     clients[i].send(pickle.dumps(datalist))
                 timeDif = time.time()-t
