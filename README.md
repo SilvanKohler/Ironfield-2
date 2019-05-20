@@ -10,24 +10,16 @@ We are developing a game, but we don't know how this ends...
 ![GitHub stars](https://img.shields.io/github/stars/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub watchers](https://img.shields.io/github/watchers/SilvanKohler/Ironfield-2.svg?style=flat-square)
 
-## Getting Started
+## Installing
 
-This is a tutorial how to install the game and run it.
+1. [Download](https://github.com/SilvanKohler/Ironfield-2/releases/) the repository
 
-### Installing
-
-How to get started
-
-[Download](https://github.com/SilvanKohler/Ironfield-2/releases/) the repository
-
-Install the modules
+2. Install the modules
 
 Open the directory and type
 ```
 pip install -r requirements.txt
 ```
-
-If it worked you are ready to go
 
 ## Starting the game
 ### On Windows
