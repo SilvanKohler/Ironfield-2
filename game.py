@@ -114,8 +114,9 @@ class Bullet():
                 ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
                 if p[3] <= 0:
                     player.xp += 15
+                    players.remove(p)
                 else:
-                    player.xp += 3
+                    player.xp += 0#3
                 client.send(pickle.dumps(['targethitplayer', [p[NAME], p[HEALTH]]]))
     def botHitted(self):
         global ownbullets
@@ -130,7 +131,7 @@ class Bullet():
                         if b[0] < b1[0]:
                             b1[0] -= 1
                 else:
-                    player.xp += 1
+                    player.xp += 0#1
                 client.send(pickle.dumps(['targethitbot', [b[0], b[3]]]))
 
 # class Bot():
@@ -260,6 +261,9 @@ def game(screen):
             wind += 0.01
             global players
             if player.dead():
+                runthreads = False
+                sleep(0.1)
+                client.close()
                 quit()
             # if frames%5 == 0:
             #     for bot in bots:
@@ -425,7 +429,8 @@ class download(threading.Thread):
                     if pickle.loads(someplayer)[1][0] == player.name:
                         player.health = pickle.loads(someplayer)[1][1]
                 elif pickle.loads(someplayer)[0] == 'targethitbot':
-                    bots.remove(bots[pickle.loads(someplayer)[1][0]])
+                    if pickle.loads(someplayer)[1][1] <= 0:
+                        bots.remove(bots[pickle.loads(someplayer)[1][0]])
                 elif pickle.loads(someplayer)[0] == 'target':
                     if item[0] == pickle.loads(someplayer)[1][0]:
                         bullets[index] = pickle.loads(someplayer)[1]
