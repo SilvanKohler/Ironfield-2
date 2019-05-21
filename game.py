@@ -110,6 +110,7 @@ class Bullet():
             self.lifetime -= 1
         else:
             client.send(pickle.dumps(['targetdied', [self]]))
+            ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
     def isHitted(self):
         global ownbullets
         for p in players:
@@ -415,6 +416,7 @@ class download(threading.Thread):
     def run(self):
         global players
         global bots
+        global bullets
         while runthreads:
             try:
                 someplayer = client.recv(65536)
@@ -437,17 +439,16 @@ class download(threading.Thread):
                         bots.remove(bots[pickle.loads(someplayer)[1][0]])
                 elif pickle.loads(someplayer)[0] == 'target':
                     for index, bullet in enumerate(bullets):
-                        if item[0] == pickle.loads(someplayer)[1][0]:
-                            bullets[index] = pickle.loads(someplayer)[1]
+                        if bullet == pickle.loads(someplayer)[1][0]:
+                            bullets = [bullet for bullet in bullets if bullet != pickle.loads(someplayer)[1][0]]
                             weg = True
                             break
                     if not weg:
                         bullets.append(pickle.loads(someplayer)[1])
                 elif pickle.loads(someplayer)[0] == 'targetdied':
                     for index, bullet in enumerate(bullets):
-                        if item[0] == pickle.loads(someplayer)[1][0]:
-                            bullets.remove(bullet)
-                            weg = True
+                        if bullet == pickle.loads(someplayer)[1][0]:
+                            bullets = [bullet for bullet in bullets if bullet != pickle.loads(someplayer)[1][0]]
                             break
             except:
                 quit()
