@@ -125,8 +125,9 @@ class Bullet():
                 ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
                 if b[3] <= 0:
                     player.xp += 10
+                    bots.remove(b)
                     for b1 in bots:
-                        if b < b1:
+                        if b[0] < b1[0]:
                             b1[0] -= 1
                 else:
                     player.xp += 1
@@ -424,7 +425,7 @@ class download(threading.Thread):
                     if pickle.loads(someplayer)[1][0] == player.name:
                         player.health = pickle.loads(someplayer)[1][1]
                 elif pickle.loads(someplayer)[0] == 'targethitbot':
-                    for 
+                    bots.remove(bots[pickle.loads(someplayer)[1][0]])
                 elif pickle.loads(someplayer)[0] == 'target':
                     if item[0] == pickle.loads(someplayer)[1][0]:
                         bullets[index] = pickle.loads(someplayer)[1]
