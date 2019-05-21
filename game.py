@@ -98,6 +98,7 @@ class Bullet():
         self.x = x
         self.y = y
     def move(self):
+        global ownbullets
         if not self.lifetime <= 0:
             if self.direction == 'up':
                 self.y -= self.velocity/8
@@ -121,7 +122,7 @@ class Bullet():
                     player.xp += 15
                     players.remove(p)
                 else:
-                    player.xp += 0#3
+                    player.xp += 2
                 client.send(pickle.dumps(['targethitplayer', [p[NAME], p[HEALTH]]]))
     def botHitted(self):
         global ownbullets
@@ -136,7 +137,7 @@ class Bullet():
                         if b[0] < b1[0]:
                             b1[0] -= 1
                 else:
-                    player.xp += 0#1
+                    player.xp += 1
                 client.send(pickle.dumps(['targethitbot', [b[0], b[3]]]))
 
 # class Bot():
