@@ -98,14 +98,18 @@ class Bullet():
         self.x = x
         self.y = y
     def move(self):
-        if self.direction == 'up':
-            self.y -= self.velocity/8
-        elif self.direction == 'down':
-            self.y += self.velocity/8
-        elif self.direction == 'left':
-            self.x -= self.velocity/8
-        elif self.direction == 'right':
-            self.x += self.velocity/8
+        if not self.lifetime <= 0:
+            if self.direction == 'up':
+                self.y -= self.velocity/8
+            elif self.direction == 'down':
+                self.y += self.velocity/8
+            elif self.direction == 'left':
+                self.x -= self.velocity/8
+            elif self.direction == 'right':
+                self.x += self.velocity/8
+            self.lifetime -= 1
+        else:
+            client.send(pickle.dumps(['targetdied', [self]]))
     def isHitted(self):
         global ownbullets
         for p in players:
@@ -401,7 +405,7 @@ class upload(threading.Thread):
     def run(self):
         while runthreads:
             for b in ownbullets:
-                client.send(pickle.dumps(['target', [bullets.index(b), b.direction, [b.x, b.y]]]))
+                client.send(pickle.dumps(['target', [b, b.direction, [b.x, b.y]]]))
                 sleep(0.05)
             client.send(pickle.dumps(['playerdata', [player.name, [player.x, player.y], player.direction, player.health]]))
             sleep(0.2)
@@ -432,12 +436,19 @@ class download(threading.Thread):
                     if pickle.loads(someplayer)[1][1] <= 0:
                         bots.remove(bots[pickle.loads(someplayer)[1][0]])
                 elif pickle.loads(someplayer)[0] == 'target':
-                    if item[0] == pickle.loads(someplayer)[1][0]:
-                        bullets[index] = pickle.loads(someplayer)[1]
-                        weg = True
-                        break
+                    for index, bullet in enumerate(bullets):
+                        if item[0] == pickle.loads(someplayer)[1][0]:
+                            bullets[index] = pickle.loads(someplayer)[1]
+                            weg = True
+                            break
                     if not weg:
                         bullets.append(pickle.loads(someplayer)[1])
+                elif pickle.loads(someplayer)[0] == 'targetdied':
+                    for index, bullet in enumerate(bullets):
+                        if item[0] == pickle.loads(someplayer)[1][0]:
+                            bullets.remove(bullet)
+                            weg = True
+                            break
             except:
                 quit()
 def __init__(name):
