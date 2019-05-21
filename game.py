@@ -125,12 +125,12 @@ class Bullet():
                 ownbullets = [bullet for bullet in ownbullets if bullet.index != self.index]
                 if b[3] <= 0:
                     player.xp += 10
+                    for b1 in bots:
+                        if b < b1:
+                            b1[0] -= 1
                 else:
                     player.xp += 1
                 client.send(pickle.dumps(['targethitbot', [b[0], b[3]]]))
-                for b1 in bots:
-                    if b < b1:
-                        b1[0] -= 1
 
 # class Bot():
 #     global directions
@@ -423,6 +423,8 @@ class download(threading.Thread):
                 elif pickle.loads(someplayer)[0] == 'targethitplayer':
                     if pickle.loads(someplayer)[1][0] == player.name:
                         player.health = pickle.loads(someplayer)[1][1]
+                elif pickle.loads(someplayer)[0] == 'targethitbot':
+                    for 
                 elif pickle.loads(someplayer)[0] == 'target':
                     if item[0] == pickle.loads(someplayer)[1][0]:
                         bullets[index] = pickle.loads(someplayer)[1]
