@@ -57,10 +57,9 @@ class lobby(threading.Thread):
                             else:
                                 b.health = pickle.loads(data)[1][1]
                             break
-                else:
-                    for i in range(len(clients)):
-                        if not clients[i] == self.csocket:
-                            clients[i].send(data)
+                for i in range(len(clients)):
+                    if not clients[i] == self.csocket:
+                        clients[i].send(data)
             sleep(0.2)
                     
 if len(sys.argv) > 1:
