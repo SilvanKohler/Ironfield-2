@@ -68,6 +68,7 @@ class flash(threading.Thread):
         elif color == 'white':
             background = 7
     def run(self):
+        global background
         sleep(0.1)
         background = 0
 class Character():
