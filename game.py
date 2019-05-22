@@ -419,6 +419,7 @@ def game(screen):
                 ownbullets.append(Bullet(player.direction, player.x, player.y))
             elif ev in (ord('Q'), ord('q'), -113):
                 print('abbrechen')
+                client.send(pickle.dumps(['playerdata', [player.name, [player.x, player.y], player.direction, 0]]))
                 runthreads = False
                 sleep(0.1)
                 client.close()
@@ -439,7 +440,7 @@ class upload(threading.Thread):
                 client.send(pickle.dumps(['target', [b, b.direction, [b.x, b.y]]]))
                 sleep(0.05)
             client.send(pickle.dumps(['playerdata', [player.name, [player.x, player.y], player.direction, player.health]]))
-            sleep(0.2)
+            sleep(0.1)
 class download(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -449,16 +450,22 @@ class download(threading.Thread):
         global bullets
         while runthreads:
             try:
-                someplayer = client.recv(65536)
+                someplayer = client.recv(1536)
                 weg = False
                 if pickle.loads(someplayer)[0] == 'playerdata':
-                    for index, item in enumerate(players):
-                        if item[0] == pickle.loads(someplayer)[1][0]:
-                            players[index] = pickle.loads(someplayer)[1]
-                            weg = True
-                            break
-                    if not weg:
-                        players.append(pickle.loads(someplayer)[1])
+                    if pickle.loads(someplayer)[1][3] <= 0:
+                        for item in players:
+                            if item[0] == pickle.loads(someplayer)[1][0]:
+                                players.remove(item)
+                                break
+                    else:
+                        for index, item in enumerate(players):
+                            if item[0] == pickle.loads(someplayer)[1][0]:
+                                players[index] = pickle.loads(someplayer)[1]
+                                weg = True
+                                break
+                        if not weg:
+                            players.append(pickle.loads(someplayer)[1])
                 elif pickle.loads(someplayer)[0] == 'botdata':
                     bots = pickle.loads(someplayer)[1]
                 elif pickle.loads(someplayer)[0] == 'targethitplayer':
