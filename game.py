@@ -463,6 +463,8 @@ class download(threading.Thread):
                 elif pickle.loads(someplayer)[0] == 'targethitplayer':
                     if pickle.loads(someplayer)[1][0] == player.name:
                         player.health = pickle.loads(someplayer)[1][1]
+                        flashing = flash('red')
+                        flashing.start()
                 elif pickle.loads(someplayer)[0] == 'targethitbot':
                     if pickle.loads(someplayer)[1][1] <= 0:
                         bots.remove(bots[pickle.loads(someplayer)[1][0]])
