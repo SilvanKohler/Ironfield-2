@@ -187,7 +187,7 @@ from time import sleep
 from opensimplex import OpenSimplex
 
 clients = []
-CHUNK = 1536
+CHUNK = 2048
 count = 0
 users = 0
 directions = [['up', 'up', 'down', 'down', 'left', 'left', 'right', 'right', 'idle'], ['up', 'down', 'left', 'right', 'idle', 'idle'], ['up', 'down', 'left', 'right', 'idle']]
@@ -244,7 +244,7 @@ if len(sys.argv) > 1:
     IP = sys.argv[1]
     PORT = int(sys.argv[2])
 else:
-    IP = '0.0.0.0'
+    IP = '192.168.1.159'
     PORT = 6969
 # server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -260,6 +260,7 @@ class listen(threading.Thread):
         while True:
             try:
                 data, addr = server.recvfrom(CHUNK)
+                print(addr)
                 for index, address in enumerate(addresses):
                         if address == addr:
                             bullets = [address for address in addresses if address != addr]
@@ -278,9 +279,9 @@ class listen(threading.Thread):
                             else:
                                 b.health = pickle.loads(data)[1][1]
                             break
-                    for address in addresses:
-                        if address != addr:
-                            server.sendto(pickle.dumps(data), address)
+                for address in addresses:
+                    if address != addr:
+                        server.sendto(pickle.dumps(data), address)
 class Bot():
     global directions
     def __init__(self):
@@ -350,6 +351,8 @@ class BotAdministration(threading.Thread):
                 if 1/fps-timeDif > 0:
                     time.sleep(1/fps-timeDif)
                 frames += 1
+            except:
+                pass
 # class BotSending(threading.Thread):
 #     def __init__(self):
 #         threading.Thread.__init__(self)
