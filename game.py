@@ -46,7 +46,30 @@ howManyBots = 10
 bots = []
 ownbullets = []
 bullets = []
-
+background = 0
+class flash(threading.Thread):
+    def __init__(self, color):
+        threading.Thread.__init__(self)
+        global background
+        if color == 'black':
+            background = 0
+        elif color == 'red':
+            background = 1
+        elif color == 'green':
+            background = 2
+        elif color == 'yellow':
+            background = 3
+        elif color == 'blue':
+            background = 4
+        elif color == 'magenta':
+            background = 5
+        elif color == 'cyan':
+            background = 6
+        elif color == 'white':
+            background = 7
+    def run(self):
+        sleep(0.1)
+        background = 0
 class Character():
     global width, height
     def __init__(self):
@@ -124,6 +147,8 @@ class Bullet():
                 else:
                     player.xp += 2
                 client.send(pickle.dumps(['targethitplayer', [p[NAME], p[HEALTH]]]))
+                flashing = flash('white')
+                flashing.start()
     def botHitted(self):
         global ownbullets
         for b in bots:
@@ -139,6 +164,8 @@ class Bullet():
                 else:
                     player.xp += 1
                 client.send(pickle.dumps(['targethitbot', [b[0], b[3]]]))
+                flashing = flash('white')
+                flashing.start()
 
 # class Bot():
 #     global directions
@@ -255,6 +282,7 @@ def game(screen):
         global player
         global bots
         global players
+        global background
         # frames = 0
         fps = 10
         wind = 0
@@ -315,7 +343,7 @@ def game(screen):
 
             for y in range(height):
                 for x in range(width):
-                    background = 0#pick_bg(x, y, clouds)
+                    # background = pick_bg(x, y, clouds)
                     if y == height/2 and x * 2 == width:
                         screen.print_at(player.char, x * 2 + screenOff[0], y + screenOff[1], colour=1, bg=background)
                     else:
@@ -334,7 +362,7 @@ def game(screen):
             colour = 0
             for bot in bots:
                 colour = 5 if bot[2] == 'walker' else 6 if bot[2] == 'idler' else 7
-                background = 0#pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
+                # background = pick_bg(int(bot[1]*8 - player.x*8 + width/2), int(bot[2]*8 - player.y*8 + height/2), clouds)
                 if abs(player.y*8 - bot[1][1]*8)  < height//2 and abs(player.x*8 - bot[1][0]*8) < width//2:
                     screen.print_at('()', int(bot[1][0]*16 - player.x*16 + width) + screenOff[0], int(bot[1][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             for p in players:
@@ -346,7 +374,7 @@ def game(screen):
                     char = '{]'
                 # if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
                 if abs(player.y*8 - p[POS][1]*8)  < height//2 and abs(player.x*8 - p[POS][0]*8) < width//2:
-                    background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
+                    # background = pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
                     screen.print_at(char, int(p[POS][0]*16 - player.x*16 + width) + screenOff[0], int(p[POS][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour+1, bg=background)
             for b in bullets:
                 colour = 5
@@ -355,7 +383,7 @@ def game(screen):
                 elif b[1] == 'left' or b[1] == 'right':
                     bullet = '--'
                 if abs(player.y*8 - b[2][1]*8)  < height//2 and abs(player.x*8 -b[2][0]*8) < width//2:
-                    background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
+                    # background = pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
                     screen.print_at(bullet , int(b[2][0]*16 - player.x*16 + width) + screenOff[0], int(b[2][1]*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             for b in ownbullets:
                 colour = 5
@@ -364,7 +392,7 @@ def game(screen):
                 elif b.direction == 'left' or b.direction == 'right':
                     bullet = '--'
                 if abs(player.y*8 - b.y*8)  < height//2 and abs(player.x*8 - b.x*8) < width//2:
-                    background = 0#pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
+                    # background = pick_bg(int(p[POS][0]*8 - player.x*8 + width/2),int(p[POS][1]*8 - player.y*8 + height/2), clouds)
                     screen.print_at(bullet , int(b.x*16 - player.x*16 + width) + screenOff[0], int(b.y*8 - player.y*8 + height/2) + screenOff[1], colour=colour, bg=background)
             # i = 0
             # for objects in terrain:
