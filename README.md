@@ -8,6 +8,7 @@ We are developing a game, but we don't know how this ends...
 ![GitHub forks](https://img.shields.io/github/forks/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub stars](https://img.shields.io/github/stars/SilvanKohler/Ironfield-2.svg?style=flat-square)
 ![GitHub watchers](https://img.shields.io/github/watchers/SilvanKohler/Ironfield-2.svg?style=flat-square)
+<img src="http://img.shields.io/liberapay/receives/SilvanKohler.svg?logo=liberapay">
 ## Table of contents
 - [Installing](#installing)
 - [Starting the game](#start)
