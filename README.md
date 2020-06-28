@@ -32,7 +32,7 @@ pip install -r requirements.txt
 
 Open the directory with the downloaded files and double-click the start.bat file or type
 ```
-py main.py
+python main.py
 ```
 ### On linux and OS X
 
@@ -59,4 +59,4 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 ## <a name="acknowledgements"></a>Acknowledgments
 
 * We used [Asciimatics](https://github.com/peterbrittain/asciimatics) by [Peterbrittain](https://github.com/peterbrittain)
-* Inspired by Ironfield (made only by me)
+* Inspired by Ironfield (made by me)

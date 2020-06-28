@@ -1,14 +1,11 @@
-import os
 import pickle
 import random
 import socket
-import sys
 import threading
 import time
 from time import sleep
 
 import numpy as np
-from asciimatics.renderers import Rainbow
 from asciimatics.screen import Screen
 from opensimplex import OpenSimplex
 
@@ -406,7 +403,7 @@ def game(screen):
             if 1/fps-timeDif > 0:
                 time.sleep(1/fps-timeDif)
             ev = screen.get_key()
-            print(ev)
+            # print(ev)
             if ev in (ord('W'), ord('w'), -204):
                 player.move('up')
             elif ev in (ord('S'), ord('s'), -206):
@@ -418,7 +415,7 @@ def game(screen):
             elif ev in (32, -32):
                 ownbullets.append(Bullet(player.direction, player.x, player.y))
             elif ev in (ord('Q'), ord('q'), -113):
-                print('abbrechen')
+                # print('abbrechen')
                 runthreads = False
                 client.send(pickle.dumps(['playerdata', [player.name, [player.x, player.y], player.direction, 0]]))
                 sleep(0.1)
@@ -495,8 +492,10 @@ class download(threading.Thread):
                 quit()
 def __init__(name):
     player.name = name
-    print('SERVER OFFLINE OR NO CONNECTION TO THE INTERNET')    
-    client.connect(server)
+    try:
+        client.connect(server)
+    except:
+        print('SERVER OFFLINE OR NO CONNECTION TO THE INTERNET')
     thread1 = upload()
     thread2 = download()
     thread1.start()

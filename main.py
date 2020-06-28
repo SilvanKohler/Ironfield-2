@@ -1,24 +1,15 @@
-import datetime
-import os
 import sys
 import time
-from random import randint
 
-from asciimatics.event import MouseEvent
-from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from asciimatics.widgets import (Background, Button, CheckBox, DatePicker,
-                                 Divider, DropdownList, Frame, Label, Layout,
-                                 PopUpDialog, PopupMenu, RadioButtons, Text,
-                                 TextBox, TimePicker)
 
 import game
-
 
 if len(sys.argv) >= 2:
     wholeName = sys.argv[1]
 else:
     wholeName = ''
+# nameWithCursor = None
 strichli = '_'
 nix = ' '
 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ :_*/=&%+\\<>?!^~`´|#@¦¢$öäü£,.}][{-1234567890'
@@ -26,7 +17,7 @@ cursor = 0
 def start():
     game.__init__(wholeName)
 def menu(screen):
-    screen.set_title('Ironfield 2 - Menü')
+    # screen.set_title('Ironfield 2 - Menü')
     global wholeName
     global cursor
     # time = datetime.datetime.now()
@@ -35,7 +26,8 @@ def menu(screen):
     # time = time[2].split('.')
     # time = int(time)
     while True:
-        global nameWithCursor # sehr wichtig!, nicht unbenutzt, seriously. TODO: get rid of that...
+        global nameWithCursor  # Important! Seriously. TODO: get rid of that...
+        # print(cursor, nameWithCursor)
         if cursor < 0:
             cursor = 0
         elif cursor > len(wholeName):
@@ -52,17 +44,18 @@ def menu(screen):
         screen.print_at(f'C:\\users\\{nameWithCursor} ', 0, 0)
         screen.refresh()
         event = screen.get_key()
-        if event == -300:
-            wholeName = f'{wholeName[:cursor-1]}{wholeName[cursor:]}'
+        if event == -300 and cursor > 0:
+            wholeName = f'{wholeName[:cursor - 1]}{wholeName[cursor:]}'
             cursor -= 1
-        if event == 13:
+        if event == 13 or event == 10:
             screen.clear()
             break
         if event == -203:
             cursor -= 1
         if event == -205:
             cursor += 1
-        # print(event)
+        # if event is not None:
+        #     print(event, file=open("log.txt", "a"))
 
         for char in chars:
             if event == ord(char):
